@@ -1,7 +1,8 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { ArrowRight, ExternalLink, Box, GitBranch, Cpu, Sparkles } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { ArrowRight, ExternalLink, Box, GitBranch, Cpu } from 'lucide-react';
 import { playClickSound } from '../utils/audio';
 import { GITHUB_USERNAME } from '../data/projects';
+import { DeveloperWorkspace3D } from './DeveloperWorkspace3D';
 
 interface HeroProps {
   onExploreClick: () => void;
@@ -11,8 +12,6 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ onExploreClick, theme = 'dark' }) => {
   const [repoCount, setRepoCount] = useState<number | string>(30);
-  const imageContainerRef = useRef<HTMLDivElement>(null);
-  const imageRef = useRef<HTMLImageElement>(null);
 
   // Fetch actual public repository count from GitHub
   useEffect(() => {
@@ -45,66 +44,6 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, theme = 'dark' }) =>
     };
   }, []);
 
-  // High-performance responsive smooth 3D parallax (3–8px shift, 1–3 deg tilt, zero React re-renders)
-  useEffect(() => {
-    const isTouchDevice =
-      typeof window !== 'undefined' &&
-      (window.matchMedia('(pointer: coarse)').matches ||
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches);
-
-    const container = imageContainerRef.current;
-    const img = imageRef.current;
-    if (!container || !img) return;
-
-    let targetX = 0;
-    let targetY = 0;
-    let currentX = 0;
-    let currentY = 0;
-    let animationFrameId: number;
-
-    const handleMouseMove = (e: MouseEvent) => {
-      if (isTouchDevice || window.innerWidth < 768) return;
-      const rect = container.getBoundingClientRect();
-      const normX = (e.clientX - rect.left) / rect.width - 0.5;
-      const normY = (e.clientY - rect.top) / rect.height - 0.5;
-
-      // Restrained, viewport-responsive parallax boundaries
-      const factor = window.innerWidth >= 1280 ? 14 : 10;
-      targetX = normX * factor;
-      targetY = normY * (factor * 0.8);
-    };
-
-    const handleMouseLeave = () => {
-      targetX = 0;
-      targetY = 0;
-    };
-
-    const updateParallax = () => {
-      currentX += (targetX - currentX) * 0.08;
-      currentY += (targetY - currentY) * 0.08;
-
-      if (img) {
-        img.style.transform = `translate3d(${currentX.toFixed(2)}px, ${currentY.toFixed(2)}px, 0) rotateX(${(-currentY * 0.18).toFixed(2)}deg) rotateY(${(currentX * 0.18).toFixed(2)}deg)`;
-      }
-
-      animationFrameId = requestAnimationFrame(updateParallax);
-    };
-
-    if (!isTouchDevice) {
-      container.addEventListener('mousemove', handleMouseMove, { passive: true });
-      container.addEventListener('mouseleave', handleMouseLeave, { passive: true });
-    }
-    animationFrameId = requestAnimationFrame(updateParallax);
-
-    return () => {
-      if (!isTouchDevice) {
-        container.removeEventListener('mousemove', handleMouseMove);
-        container.removeEventListener('mouseleave', handleMouseLeave);
-      }
-      cancelAnimationFrame(animationFrameId);
-    };
-  }, []);
-
   const isDark = theme === 'dark';
 
   return (
@@ -112,7 +51,7 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, theme = 'dark' }) =>
       id="hero"
       className="relative min-h-[92vh] sm:min-h-screen pt-24 pb-12 sm:pt-28 lg:pt-32 lg:pb-16 flex items-center justify-center px-4 sm:px-6 lg:px-10 xl:pl-28 overflow-hidden"
     >
-      {/* Subtle Restrained Ambient Glow Flares (No neon clutter) */}
+      {/* Subtle Restrained Ambient Glow Flares */}
       <div className="absolute top-1/4 -left-20 w-[400px] h-[400px] rounded-full bg-blue-600/5 blur-[120px] pointer-events-none" />
       <div className="absolute bottom-10 right-0 w-[450px] h-[450px] rounded-full bg-cyan-600/5 blur-[130px] pointer-events-none" />
 
@@ -253,39 +192,18 @@ export const Hero: React.FC<HeroProps> = ({ onExploreClick, theme = 'dark' }) =>
           </div>
 
           {/* ======================================================= */}
-          {/* RIGHT COLUMN: Responsive 3D Desk Setup Visual Artwork   */}
+          {/* RIGHT COLUMN: Full Real Three.js 3D Model Workspace     */}
           {/* ======================================================= */}
-          <div
-            ref={imageContainerRef}
-            className="lg:col-span-6 relative flex items-center justify-center w-full py-4 lg:py-0 select-none [perspective:1200px]"
-          >
-            {/* Responsive Glowing Neon Aura Outline Backdrop */}
+          <div className="lg:col-span-6 relative flex items-center justify-center w-full min-h-[380px] xs:min-h-[420px] sm:min-h-[480px] lg:min-h-[540px] xl:min-h-[600px]">
+            {/* Ambient Cyan/Blue Neon Glow Underlay */}
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              <div className="w-[85%] sm:w-[75%] lg:w-[88%] aspect-[4/3] rounded-full bg-cyan-500/10 blur-[50px] sm:blur-[80px] lg:blur-[100px] opacity-70 transition-opacity" />
-              <div className="w-[60%] sm:w-[50%] lg:w-[65%] aspect-[4/3] rounded-full bg-blue-600/10 blur-[40px] sm:blur-[70px] lg:blur-[90px] opacity-60 transition-opacity" />
+              <div className="w-[85%] sm:w-[75%] lg:w-[88%] aspect-[4/3] rounded-full bg-cyan-500/10 blur-[60px] sm:blur-[90px] lg:blur-[110px] opacity-75" />
+              <div className="w-[60%] sm:w-[50%] lg:w-[65%] aspect-[4/3] rounded-full bg-blue-600/10 blur-[50px] sm:blur-[80px] lg:blur-[100px] opacity-65" />
             </div>
 
-            {/* Responsive floating wrapper with smooth ease-in-out translation */}
-            <div className="relative w-full max-w-[340px] xs:max-w-[420px] sm:max-w-[520px] md:max-w-[580px] lg:max-w-none flex items-center justify-center animate-[heroFloat_7s_ease-in-out_infinite] [transform-style:preserve-3d]">
-
-              {/* Seamless Dark Background Radial Blend Filter */}
-              <div className="absolute inset-0 bg-radial from-transparent via-transparent to-[#0A0A0A] pointer-events-none opacity-40" />
-
-              {/* Main 3D Desk Illustration (Responsive vector with non-scaling neon outlines) */}
-              <div className="w-full aspect-[4/3] max-h-[360px] xs:max-h-[420px] sm:max-h-[500px] lg:max-h-[580px] xl:max-h-[620px] flex items-center justify-center">
-                <img
-                  ref={imageRef}
-                  src="/hero-desk.svg"
-                  alt="Futuristic developer workspace with laptop displaying code and modern software engineering technology stack"
-                  loading="eager"
-                  referrerPolicy="no-referrer"
-                  className="w-full h-full object-contain transition-transform duration-300 ease-out will-change-transform drop-shadow-[0_15px_35px_rgba(0,0,0,0.7)] sm:drop-shadow-[0_25px_60px_rgba(0,0,0,0.85)] hover:scale-[1.01]"
-                  style={{
-                    maskImage: 'radial-gradient(ellipse 94% 90% at 50% 50%, black 78%, transparent 100%)',
-                    WebkitMaskImage: 'radial-gradient(ellipse 94% 90% at 50% 50%, black 78%, transparent 100%)',
-                  }}
-                />
-              </div>
+            {/* Interactive Real 3D Workspace Scene */}
+            <div className="relative w-full h-full flex items-center justify-center z-10">
+              <DeveloperWorkspace3D theme={theme} />
             </div>
           </div>
 
